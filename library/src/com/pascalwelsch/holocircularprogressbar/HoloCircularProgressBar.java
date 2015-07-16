@@ -17,12 +17,14 @@ import android.view.View;
 
 /**
  * HoloCircularProgressBar custom view.
- *
+ * <p/>
  * https://github.com/passsy/android-HoloCircularProgressBar
  *
  * @author Pascal.Welsch
  * @version 1.3 (03.10.2014)
  * @since 05.03.2013
+ * <p/>
+ * Edited by Jordon de Hoog
  */
 public class HoloCircularProgressBar extends View {
 
@@ -89,7 +91,7 @@ public class HoloCircularProgressBar extends View {
 
     /**
      * The gravity of the view. Where should the Circle be drawn within the given bounds
-     *
+     * <p/>
      * {@link #computeInsets(int, int)}
      */
     private int mGravity = Gravity.CENTER;
@@ -153,7 +155,7 @@ public class HoloCircularProgressBar extends View {
 
     /**
      * Radius of the circle
-     *
+     * <p/>
      * <p> Note: (Re)calculated in {@link #onMeasure(int, int)}. </p>
      */
     private float mRadius;
@@ -165,7 +167,7 @@ public class HoloCircularProgressBar extends View {
 
     /**
      * The Thumb pos x.
-     *
+     * <p/>
      * Care. the position is not the position of the rotated thumb. The position is only calculated
      * in {@link #onMeasure(int, int)}
      */
@@ -173,7 +175,7 @@ public class HoloCircularProgressBar extends View {
 
     /**
      * The Thumb pos y.
-     *
+     * <p/>
      * Care. the position is not the position of the rotated thumb. The position is only calculated
      * in {@link #onMeasure(int, int)}
      */
@@ -206,7 +208,8 @@ public class HoloCircularProgressBar extends View {
      * @param context the context
      */
     public HoloCircularProgressBar(final Context context) {
-        this(context, null);
+        super(context);
+        init(context, null);
     }
 
     /**
@@ -216,7 +219,8 @@ public class HoloCircularProgressBar extends View {
      * @param attrs   the attrs
      */
     public HoloCircularProgressBar(final Context context, final AttributeSet attrs) {
-        this(context, attrs, R.attr.circularProgressBarStyle);
+        super(context, attrs);
+        init(context, attrs);
     }
 
     /**
@@ -227,31 +231,35 @@ public class HoloCircularProgressBar extends View {
      * @param defStyle the def style
      */
     public HoloCircularProgressBar(final Context context, final AttributeSet attrs,
-            final int defStyle) {
+                                   final int defStyle) {
         super(context, attrs, defStyle);
+        init(context, attrs);
+    }
 
+    private void init(final Context context, AttributeSet attributeSet) {
         // load the styled attributes and set their properties
         final TypedArray attributes = context
-                .obtainStyledAttributes(attrs, R.styleable.HoloCircularProgressBar,
-                        defStyle, 0);
+                .obtainStyledAttributes(attributeSet, R.styleable.HoloCircularProgressBar,
+                        0, 0);
         if (attributes != null) {
             try {
+
                 setProgressColor(attributes
-                        .getColor(R.styleable.HoloCircularProgressBar_progress_color, Color.CYAN));
+                        .getColor(R.styleable.HoloCircularProgressBar_cpb_progress_color, Color.CYAN));
                 setProgressBackgroundColor(attributes
-                        .getColor(R.styleable.HoloCircularProgressBar_progress_background_color,
+                        .getColor(R.styleable.HoloCircularProgressBar_cpb_progress_background_color,
                                 Color.GREEN));
                 setProgress(
-                        attributes.getFloat(R.styleable.HoloCircularProgressBar_progress, 0.0f));
+                        attributes.getFloat(R.styleable.HoloCircularProgressBar_cpb_progress, 0.0f));
                 setMarkerProgress(
-                        attributes.getFloat(R.styleable.HoloCircularProgressBar_marker_progress,
+                        attributes.getFloat(R.styleable.HoloCircularProgressBar_cpb_marker_progress,
                                 0.0f));
                 setWheelSize((int) attributes
-                        .getDimension(R.styleable.HoloCircularProgressBar_stroke_width, 10));
+                        .getDimension(R.styleable.HoloCircularProgressBar_cpb_stroke_width, 15));
                 setThumbEnabled(attributes
-                        .getBoolean(R.styleable.HoloCircularProgressBar_thumb_visible, true));
+                        .getBoolean(R.styleable.HoloCircularProgressBar_cpb_thumb_visible, true));
                 setMarkerEnabled(attributes
-                        .getBoolean(R.styleable.HoloCircularProgressBar_marker_visible, true));
+                        .getBoolean(R.styleable.HoloCircularProgressBar_cpb_marker_visible, false));
 
                 mGravity = attributes
                         .getInt(R.styleable.HoloCircularProgressBar_android_gravity,
@@ -272,7 +280,6 @@ public class HoloCircularProgressBar extends View {
 
         // the view has now all properties and can be drawn
         mIsInitializing = false;
-
     }
 
     @Override
@@ -306,17 +313,14 @@ public class HoloCircularProgressBar extends View {
             canvas.restore();
         }
 
-        if (isThumbEnabled()) {
+        if (isThumbEnabled() && progressRotation != 360) {
             // draw the thumb square at the correct rotated position
             canvas.save();
             canvas.rotate(progressRotation - 90);
-            // rotate the square by 45 degrees
             canvas.rotate(45, mThumbPosX, mThumbPosY);
-            mSquareRect.left = mThumbPosX - mThumbRadius / 3;
-            mSquareRect.right = mThumbPosX + mThumbRadius / 3;
-            mSquareRect.top = mThumbPosY - mThumbRadius / 3;
-            mSquareRect.bottom = mThumbPosY + mThumbRadius / 3;
-            canvas.drawRect(mSquareRect, mThumbColorPaint);
+            float circleX = mThumbPosX - mThumbRadius / 3;
+            float circleY = mThumbPosY - mThumbRadius / 3;
+            canvas.drawCircle(circleX, circleY, mThumbRadius / 3, mThumbColorPaint);
             canvas.restore();
         }
     }
@@ -494,12 +498,9 @@ public class HoloCircularProgressBar extends View {
             mProgress = 1;
         } else {
 
-            if (progress >= 1) {
-                mOverrdraw = true;
-            } else {
-                mOverrdraw = false;
-            }
+            mOverrdraw = progress >= 1;
 
+            mProgress = 0.1f;
             mProgress = progress % 1.0f;
         }
 
@@ -556,7 +557,7 @@ public class HoloCircularProgressBar extends View {
 
     /**
      * Compute insets.
-     *
+     * <p/>
      * <pre>
      *  ______________________
      * |_________dx/2_________|
@@ -625,7 +626,7 @@ public class HoloCircularProgressBar extends View {
      */
     private void updateBackgroundColor() {
         mBackgroundColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBackgroundColorPaint.setColor(mProgressBackgroundColor);
+        mBackgroundColorPaint.setColor(mProgressColor);
         mBackgroundColorPaint.setStyle(Paint.Style.STROKE);
         mBackgroundColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
@@ -637,7 +638,7 @@ public class HoloCircularProgressBar extends View {
      */
     private void updateMarkerColor() {
         mMarkerColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mMarkerColorPaint.setColor(mProgressBackgroundColor);
+        mMarkerColorPaint.setColor(mProgressColor);
         mMarkerColorPaint.setStyle(Paint.Style.STROKE);
         mMarkerColorPaint.setStrokeWidth(mCircleStrokeWidth / 2);
 
@@ -649,7 +650,7 @@ public class HoloCircularProgressBar extends View {
      */
     private void updateProgressColor() {
         mProgressColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mProgressColorPaint.setColor(mProgressColor);
+        mProgressColorPaint.setColor(mProgressBackgroundColor);
         mProgressColorPaint.setStyle(Paint.Style.STROKE);
         mProgressColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
