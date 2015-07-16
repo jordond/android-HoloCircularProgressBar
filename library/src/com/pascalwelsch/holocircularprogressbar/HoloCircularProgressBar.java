@@ -82,7 +82,7 @@ public class HoloCircularProgressBar extends View {
     /**
      * the paint for the background.
      */
-    private Paint mBackgroundColorPaint = new Paint();
+    private Paint mProgressColorPaint = new Paint();
 
     /**
      * The stroke width used to paint the circle.
@@ -151,7 +151,7 @@ public class HoloCircularProgressBar extends View {
     /**
      * paint for the progress.
      */
-    private Paint mProgressColorPaint;
+    private Paint mBackgroundColorPaint;
 
     /**
      * Radius of the circle
@@ -295,12 +295,12 @@ public class HoloCircularProgressBar extends View {
         // draw the background
         if (!mOverrdraw) {
             canvas.drawArc(mCircleBounds, 270, -(360 - progressRotation), false,
-                    mBackgroundColorPaint);
+                    mProgressColorPaint);
         }
 
         // draw the progress or a full circle if overdraw is true
         canvas.drawArc(mCircleBounds, 270, mOverrdraw ? 360 : progressRotation, false,
-                mProgressColorPaint);
+                mBackgroundColorPaint);
 
         // draw the marker at the correct rotated position
         if (mIsMarkerEnabled) {
@@ -624,11 +624,16 @@ public class HoloCircularProgressBar extends View {
     /**
      * updates the paint of the background
      */
-    private void updateBackgroundColor() {
-        mBackgroundColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBackgroundColorPaint.setColor(mProgressColor);
-        mBackgroundColorPaint.setStyle(Paint.Style.STROKE);
-        mBackgroundColorPaint.setStrokeWidth(mCircleStrokeWidth);
+    private void updateProgressColor() {
+        mProgressColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mProgressColorPaint.setColor(mProgressColor);
+        mProgressColorPaint.setStyle(Paint.Style.STROKE);
+        mProgressColorPaint.setStrokeWidth(mCircleStrokeWidth);
+
+        mThumbColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mThumbColorPaint.setColor(mProgressColor);
+        mThumbColorPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        mThumbColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
         invalidate();
     }
@@ -648,16 +653,11 @@ public class HoloCircularProgressBar extends View {
     /**
      * updates the paint of the progress and the thumb to give them a new visual style
      */
-    private void updateProgressColor() {
-        mProgressColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mProgressColorPaint.setColor(mProgressBackgroundColor);
-        mProgressColorPaint.setStyle(Paint.Style.STROKE);
-        mProgressColorPaint.setStrokeWidth(mCircleStrokeWidth);
-
-        mThumbColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mThumbColorPaint.setColor(mProgressColor);
-        mThumbColorPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        mThumbColorPaint.setStrokeWidth(mCircleStrokeWidth);
+    private void updateBackgroundColor() {
+        mBackgroundColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBackgroundColorPaint.setColor(mProgressBackgroundColor);
+        mBackgroundColorPaint.setStyle(Paint.Style.STROKE);
+        mBackgroundColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
         invalidate();
     }
