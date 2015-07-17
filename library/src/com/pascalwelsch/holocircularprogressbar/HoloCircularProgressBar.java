@@ -181,6 +181,8 @@ public class HoloCircularProgressBar extends View {
      */
     private int mThumbColor;
 
+    private boolean mIsDefaultThumbColor;
+
     /**
      * The Thumb color paint.
      */
@@ -298,6 +300,8 @@ public class HoloCircularProgressBar extends View {
             }
         }
 
+        mIsDefaultThumbColor = getThumbColor() == getProgressColor();
+
         updateDirection(mIsCountdown);
 
         mThumbRadius = mCircleStrokeWidth * 2;
@@ -322,7 +326,7 @@ public class HoloCircularProgressBar extends View {
 
         if (!isCountdown) {
             progressColor = progressBackgroundColor;
-            if (thumbColor == mProgressColor) {
+            if (mIsDefaultThumbColor) {
                 thumbColor = mProgressColor;
             }
             progressBackgroundColor = mProgressColor;
