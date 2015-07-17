@@ -25,6 +25,7 @@ import android.view.View;
  * @since 05.03.2013
  * <p/>
  * Edited by Jordon de Hoog
+ * - Added thumb color
  */
 public class HoloCircularProgressBar extends View {
 
@@ -68,6 +69,16 @@ public class HoloCircularProgressBar extends View {
      * used to save and restore the visibility of the marker in this instance
      */
     private static final String INSTANCE_STATE_MARKER_VISIBLE = "marker_visible";
+
+    /**
+     * used to save and restore the direction of the movement
+     */
+    private static final String INSTANCE_STATE_IS_COUNTDOWN = "isCountdown";
+
+    /**
+     * used to save and restore the thumb color
+     */
+    private static final String INSTANCE_STATE_THUMB_COLOR = "thumbColor";
 
     /**
      * The rectangle enclosing the circle.
@@ -119,6 +130,11 @@ public class HoloCircularProgressBar extends View {
     private boolean mIsThumbEnabled = true;
 
     /**
+     * indicates whether or not to count up or down
+     */
+    private boolean mIsCountdown = true;
+
+    /**
      * The Marker color paint.
      */
     private Paint mMarkerColorPaint;
@@ -159,6 +175,11 @@ public class HoloCircularProgressBar extends View {
      * <p> Note: (Re)calculated in {@link #onMeasure(int, int)}. </p>
      */
     private float mRadius;
+
+    /**
+     * The thumb color
+     */
+    private int mThumbColor;
 
     /**
      * The Thumb color paint.
@@ -245,12 +266,14 @@ public class HoloCircularProgressBar extends View {
             try {
 
                 setProgressColor(attributes
-                        .getColor(R.styleable.HoloCircularProgressBar_cpb_progress_color, Color.CYAN));
+                        .getColor(R.styleable.HoloCircularProgressBar_cpb_progress_color,
+                                Color.CYAN));
                 setProgressBackgroundColor(attributes
                         .getColor(R.styleable.HoloCircularProgressBar_cpb_progress_background_color,
                                 Color.GREEN));
                 setProgress(
-                        attributes.getFloat(R.styleable.HoloCircularProgressBar_cpb_progress, 0.0f));
+                        attributes.getFloat(R.styleable.HoloCircularProgressBar_cpb_progress,
+                                0.0f));
                 setMarkerProgress(
                         attributes.getFloat(R.styleable.HoloCircularProgressBar_cpb_marker_progress,
                                 0.0f));
@@ -260,6 +283,11 @@ public class HoloCircularProgressBar extends View {
                         .getBoolean(R.styleable.HoloCircularProgressBar_cpb_thumb_visible, true));
                 setMarkerEnabled(attributes
                         .getBoolean(R.styleable.HoloCircularProgressBar_cpb_marker_visible, false));
+                mIsCountdown = attributes
+                        .getBoolean(R.styleable.HoloCircularProgressBar_cpb_countdown, true);
+                setThumbColor(attributes
+                        .getColor(R.styleable.HoloCircularProgressBar_cpb_thumb_color,
+                                mProgressColor));
 
                 mGravity = attributes
                         .getInt(R.styleable.HoloCircularProgressBar_android_gravity,
@@ -270,6 +298,8 @@ public class HoloCircularProgressBar extends View {
             }
         }
 
+        updateDirection(mIsCountdown);
+
         mThumbRadius = mCircleStrokeWidth * 2;
 
         updateBackgroundColor();
@@ -278,8 +308,29 @@ public class HoloCircularProgressBar extends View {
 
         updateProgressColor();
 
+        updateThumbColor();
+
         // the view has now all properties and can be drawn
         mIsInitializing = false;
+    }
+
+    public void updateDirection(boolean isCountdown) {
+        // Count up not down, reverse the colors to 'fake' the effect.
+        int progressColor = mProgressColor;
+        int thumbColor = mThumbColor;
+        int progressBackgroundColor = mProgressBackgroundColor;
+
+        if (!isCountdown) {
+            progressColor = progressBackgroundColor;
+            if (thumbColor == mProgressColor) {
+                thumbColor = mProgressColor;
+            }
+            progressBackgroundColor = mProgressColor;
+        }
+
+        setProgressColor(progressColor);
+        setThumbColor(thumbColor);
+        setProgressBackgroundColor(progressBackgroundColor);
     }
 
     @Override
@@ -389,6 +440,12 @@ public class HoloCircularProgressBar extends View {
                 updateProgressColor();
             }
 
+            final int thumbColor = bundle.getInt(INSTANCE_STATE_THUMB_COLOR);
+            if (thumbColor != mThumbColor) {
+                mThumbColor = thumbColor;
+                updateThumbColor();
+            }
+
             final int progressBackgroundColor = bundle
                     .getInt(INSTANCE_STATE_PROGRESS_BACKGROUND_COLOR);
             if (progressBackgroundColor != mProgressBackgroundColor) {
@@ -399,6 +456,8 @@ public class HoloCircularProgressBar extends View {
             mIsThumbEnabled = bundle.getBoolean(INSTANCE_STATE_THUMB_VISIBLE);
 
             mIsMarkerEnabled = bundle.getBoolean(INSTANCE_STATE_MARKER_VISIBLE);
+
+            mIsCountdown = bundle.getBoolean(INSTANCE_STATE_IS_COUNTDOWN);
 
             super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE_SAVEDSTATE));
             return;
@@ -414,9 +473,11 @@ public class HoloCircularProgressBar extends View {
         bundle.putFloat(INSTANCE_STATE_PROGRESS, mProgress);
         bundle.putFloat(INSTANCE_STATE_MARKER_PROGRESS, mMarkerProgress);
         bundle.putInt(INSTANCE_STATE_PROGRESS_COLOR, mProgressColor);
+        bundle.putInt(INSTANCE_STATE_THUMB_COLOR, mThumbColor);
         bundle.putInt(INSTANCE_STATE_PROGRESS_BACKGROUND_COLOR, mProgressBackgroundColor);
         bundle.putBoolean(INSTANCE_STATE_THUMB_VISIBLE, mIsThumbEnabled);
         bundle.putBoolean(INSTANCE_STATE_MARKER_VISIBLE, mIsMarkerEnabled);
+        bundle.putBoolean(INSTANCE_STATE_IS_COUNTDOWN, mIsCountdown);
         return bundle;
     }
 
@@ -462,6 +523,13 @@ public class HoloCircularProgressBar extends View {
      */
     public boolean isThumbEnabled() {
         return mIsThumbEnabled;
+    }
+
+    /**
+     * @return true if counting down (counter-clockwise)
+     */
+    public boolean isIsCountdown() {
+        return mIsCountdown;
     }
 
     /**
@@ -542,6 +610,17 @@ public class HoloCircularProgressBar extends View {
     }
 
     /**
+     * sets whether the progress should countdown or count up
+     * @param mIsCountdown true to count down (counter-clockwise)
+     */
+    public void setIsCountdown(boolean mIsCountdown) {
+        if (mIsCountdown != this.mIsCountdown) {
+            updateDirection(mIsCountdown);
+        }
+        this.mIsCountdown = mIsCountdown;
+    }
+
+    /**
      * Sets the wheel size.
      *
      * @param dimension the new wheel size
@@ -553,6 +632,17 @@ public class HoloCircularProgressBar extends View {
         updateBackgroundColor();
         updateMarkerColor();
         updateProgressColor();
+        updateThumbColor();
+    }
+
+    public int getThumbColor() {
+        return mThumbColor;
+    }
+
+    public void setThumbColor(int mThumbColor) {
+        this.mThumbColor = mThumbColor;
+
+        updateThumbColor();
     }
 
     /**
@@ -630,8 +720,12 @@ public class HoloCircularProgressBar extends View {
         mProgressColorPaint.setStyle(Paint.Style.STROKE);
         mProgressColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
+        invalidate();
+    }
+
+    private void updateThumbColor() {
         mThumbColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mThumbColorPaint.setColor(mProgressColor);
+        mThumbColorPaint.setColor(mThumbColor);
         mThumbColorPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mThumbColorPaint.setStrokeWidth(mCircleStrokeWidth);
 

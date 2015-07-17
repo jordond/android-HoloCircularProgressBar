@@ -6,9 +6,11 @@
         <attr name="cpb_progress" format="float" />
         <attr name="cpb_marker_progress" format="float" />
         <attr name="cpb_progress_color" format="color" />
+        <attr name="cpb_thumb_color" format="color" />
         <attr name="cpb_progress_background_color" format="color" />
         <attr name="cpb_thumb_visible" format="boolean" />
         <attr name="cpb_marker_visible" format="boolean" />
+        <attr name="cpb_countdown" format="boolean" />
         <attr name="android:gravity" />
     </declare-styleable>
 
