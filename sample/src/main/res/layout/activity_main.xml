@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_indigo_500"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/seconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/progressbar"
+            android:layout_alignEnd="@+id/progressbar"
+            android:layout_alignStart="@+id/progressbar"
+            android:layout_alignTop="@+id/progressbar"
+            android:gravity="center"
+            android:text="60.0"
+            android:textColor="@color/md_white_1000"
+            android:textSize="70sp" />
+
+        <com.pascalwelsch.holocircularprogressbar.HoloCircularProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:cpb_progress="0.5"
+            app:cpb_thumb_color="@color/md_teal_500"
+            app:cpb_progress_background_color="@color/md_white_1000"
+            app:cpb_progress_color="@color/md_pink_A400">
+
+        </com.pascalwelsch.holocircularprogressbar.HoloCircularProgressBar>
+
+    </RelativeLayout>
+
+
+    <ImageButton
+        android:id="@+id/button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_av_play_arrow" />
+
+    <ImageButton
+        android:id="@+id/button2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_av_play_arrow" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/click"
+        android:text="test"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="count up^"
+        android:textColor="@color/md_white_1000"
+        android:id="@+id/current"/>
+
+
+</LinearLayout>
