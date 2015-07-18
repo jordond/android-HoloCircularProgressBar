@@ -590,7 +590,7 @@ public class HoloCircularProgressBar extends View {
         mProgressBackgroundColor = color;
 
         updateMarkerColor();
-//        updateThumbColor();
+        updateThumbColor();
         updateProgressColor();
         updateBackgroundColor();
     }
@@ -604,7 +604,7 @@ public class HoloCircularProgressBar extends View {
         mProgressColor = color;
 
         updateBackgroundColor();
-//        updateThumbColor();
+        updateThumbColor();
         updateProgressColor();
     }
 
@@ -740,7 +740,7 @@ public class HoloCircularProgressBar extends View {
 
     private void updateThumbColor() {
         int color = mThumbColor;
-        if (!mCustomThumbColor) {
+        if (!mIsCountdown && !mCustomThumbColor) {
             color = mProgressColor;
         }
         mThumbColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
