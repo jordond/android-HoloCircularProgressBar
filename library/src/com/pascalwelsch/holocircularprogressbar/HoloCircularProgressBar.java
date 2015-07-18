@@ -181,8 +181,6 @@ public class HoloCircularProgressBar extends View {
      */
     private int mThumbColor;
 
-    private boolean mIsDefaultThumbColor;
-
     /**
      * The Thumb color paint.
      */
@@ -300,9 +298,8 @@ public class HoloCircularProgressBar extends View {
             }
         }
 
-        mIsDefaultThumbColor = getThumbColor() == getProgressColor();
 
-        updateDirection(mIsCountdown);
+        //updateDirection(mIsCountdown);
 
         mThumbRadius = mCircleStrokeWidth * 2;
 
@@ -326,7 +323,7 @@ public class HoloCircularProgressBar extends View {
 
         if (!isCountdown) {
             progressColor = progressBackgroundColor;
-            if (mIsDefaultThumbColor) {
+            if (thumbColor != mProgressBackgroundColor) {
                 thumbColor = mProgressColor;
             }
             progressBackgroundColor = mProgressColor;
@@ -618,10 +615,13 @@ public class HoloCircularProgressBar extends View {
      * @param mIsCountdown true to count down (counter-clockwise)
      */
     public void setIsCountdown(boolean mIsCountdown) {
-        if (mIsCountdown != this.mIsCountdown) {
-            updateDirection(mIsCountdown);
-        }
         this.mIsCountdown = mIsCountdown;
+
+        // update the paints
+        updateBackgroundColor();
+        updateMarkerColor();
+        updateProgressColor();
+        updateThumbColor();
     }
 
     /**
@@ -719,8 +719,12 @@ public class HoloCircularProgressBar extends View {
      * updates the paint of the background
      */
     private void updateProgressColor() {
+        int color = mProgressColor;
+        if (!mIsCountdown) {
+            color = mProgressBackgroundColor;
+        }
         mProgressColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mProgressColorPaint.setColor(mProgressColor);
+        mProgressColorPaint.setColor(color);
         mProgressColorPaint.setStyle(Paint.Style.STROKE);
         mProgressColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
@@ -728,8 +732,12 @@ public class HoloCircularProgressBar extends View {
     }
 
     private void updateThumbColor() {
+        int color = mThumbColor;
+        if (!isIsCountdown() && color != mProgressBackgroundColor) {
+            color = mProgressColor;
+        }
         mThumbColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mThumbColorPaint.setColor(mThumbColor);
+        mThumbColorPaint.setColor(color);
         mThumbColorPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mThumbColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
@@ -752,8 +760,12 @@ public class HoloCircularProgressBar extends View {
      * updates the paint of the progress and the thumb to give them a new visual style
      */
     private void updateBackgroundColor() {
+        int color = mProgressBackgroundColor;
+        if (!mIsCountdown) {
+            color = mProgressColor;
+        }
         mBackgroundColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBackgroundColorPaint.setColor(mProgressBackgroundColor);
+        mBackgroundColorPaint.setColor(color);
         mBackgroundColorPaint.setStyle(Paint.Style.STROKE);
         mBackgroundColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
