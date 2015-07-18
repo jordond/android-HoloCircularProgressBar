@@ -181,6 +181,8 @@ public class HoloCircularProgressBar extends View {
      */
     private int mThumbColor;
 
+    private boolean mCustomThumbColor;
+
     /**
      * The Thumb color paint.
      */
@@ -298,6 +300,7 @@ public class HoloCircularProgressBar extends View {
             }
         }
 
+        mCustomThumbColor = mThumbColor != mProgressColor;
 
         //updateDirection(mIsCountdown);
 
@@ -587,6 +590,8 @@ public class HoloCircularProgressBar extends View {
         mProgressBackgroundColor = color;
 
         updateMarkerColor();
+//        updateThumbColor();
+        updateProgressColor();
         updateBackgroundColor();
     }
 
@@ -598,6 +603,8 @@ public class HoloCircularProgressBar extends View {
     public void setProgressColor(final int color) {
         mProgressColor = color;
 
+        updateBackgroundColor();
+//        updateThumbColor();
         updateProgressColor();
     }
 
@@ -645,7 +652,7 @@ public class HoloCircularProgressBar extends View {
 
     public void setThumbColor(int mThumbColor) {
         this.mThumbColor = mThumbColor;
-
+        mCustomThumbColor = true;
         updateThumbColor();
     }
 
@@ -733,7 +740,7 @@ public class HoloCircularProgressBar extends View {
 
     private void updateThumbColor() {
         int color = mThumbColor;
-        if (!isIsCountdown() && color != mProgressBackgroundColor) {
+        if (!mCustomThumbColor) {
             color = mProgressColor;
         }
         mThumbColorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
