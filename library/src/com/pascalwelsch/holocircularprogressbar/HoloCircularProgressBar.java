@@ -368,7 +368,7 @@ public class HoloCircularProgressBar extends View {
             canvas.restore();
         }
 
-        if (isThumbEnabled() && progressRotation != 360) {
+        if (isThumbEnabled() && progressRotation != 360 && progressRotation != 0) {
             // draw the thumb square at the correct rotated position
             canvas.save();
             canvas.rotate(progressRotation - 90);
