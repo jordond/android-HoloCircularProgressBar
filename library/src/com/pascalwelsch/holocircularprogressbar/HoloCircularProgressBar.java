@@ -781,19 +781,4 @@ public class HoloCircularProgressBar extends View {
         invalidate();
     }
 
-    public void updateProgress(boolean animate, float progress, long duration) {
-        if (animate) {
-            animateProgressWheel(progress, duration);
-        } else {
-            setProgress(progress);
-        }
-    }
-
-    public void animateProgressWheel(float progress, long duration) {
-        ObjectAnimator animation = ObjectAnimator.ofFloat(this, "progress", progress);
-        animation.setDuration(duration);
-        animation.setInterpolator(new LinearInterpolator());
-        animation.start();
-    }
-
 }
