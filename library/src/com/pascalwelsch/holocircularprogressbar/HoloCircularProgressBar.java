@@ -1,5 +1,6 @@
 package com.pascalwelsch.holocircularprogressbar;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +14,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 
 /**
@@ -777,6 +779,21 @@ public class HoloCircularProgressBar extends View {
         mBackgroundColorPaint.setStrokeWidth(mCircleStrokeWidth);
 
         invalidate();
+    }
+
+    public void updateProgress(boolean animate, float progress, long duration) {
+        if (animate) {
+            animateProgressWheel(progress, duration);
+        } else {
+            setProgress(progress);
+        }
+    }
+
+    public void animateProgressWheel(float progress, long duration) {
+        ObjectAnimator animation = ObjectAnimator.ofFloat(this, "progress", progress);
+        animation.setDuration(duration);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.start();
     }
 
 }
