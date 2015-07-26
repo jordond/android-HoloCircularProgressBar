@@ -1,5 +1,9 @@
 # HoloCircularProgressBar
 
+##Edited July 2015.
+- Added the ability for the progress bar to countdown (default), or retain countup feature.
+- Adding to bintray/maven
+
 ### What is HoloCircularProgressBar
 
 HoloCircularProgressBar is a Custom View implementation for Android you might know from the Android Clock App from Android 4.1
